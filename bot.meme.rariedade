@@ -1,0 +1,84 @@
+import discord
+import os
+import random
+from discord.ext import commands
+
+# Ativar permissões
+intents = discord.Intents.default()
+intents.message_content = True
+
+# Criar o bot
+bot = commands.Bot(command_prefix='$', intents=intents)
+
+@bot.event
+async def on_ready():
+    print(f'Estamos logados como {bot.user}')
+
+# -------------------------------
+# COMANDOS DO BOT
+# -------------------------------
+
+# Comando de saudação
+@bot.command()
+async def hello(ctx):
+    await ctx.send(f'Olá! Eu sou o bot {bot.user}!')
+
+# Comando de repetição
+@bot.command()
+async def heh(ctx, count_heh: int = 5):
+    await ctx.send("he" * count_heh)
+
+# Comando que envia um meme aleatório com raridade
+@bot.command()
+async def meme(ctx):
+    folder = 'images'
+    files = os.listdir(folder)
+    print(f"Arquivos encontrados: {files}")
+
+    if not files:
+        await ctx.send("Nenhum meme encontrado na pasta 😢")
+        return
+
+    # Dicionário de raridades e seus pesos
+    raridades = {
+        "comum": 10,     # mais provável
+        "raro": 3,       # menos provável
+        "lendario": 1    # bem raro
+    }
+
+    # Atribui uma raridade a cada meme (por nome)
+    # Exemplo: "meme_lendario.png" será considerado lendário
+    memes = []
+    pesos = []
+
+    for file in files:
+        nome_lower = file.lower()
+        if "lendario" in nome_lower:
+            raridade = "lendario"
+        elif "raro" in nome_lower:
+            raridade = "raro"
+        else:
+            raridade = "comum"
+
+        memes.append(file)
+        pesos.append(raridades[raridade])
+
+    # Escolhe com base na raridade (pesos)
+    img_name = random.choices(memes, weights=pesos, k=1)[0]
+
+    with open(f'{folder}/{img_name}', 'rb') as f:
+        picture = discord.File(f)
+
+    # Mostra a raridade na mensagem
+    raridade_texto = (
+        "🟢 **Comum**" if "lendario" not in img_name and "raro" not in img_name else
+        "🟠 **Raro**" if "raro" in img_name else
+        "🔴 **Lendário**"
+    )
+
+    await ctx.send(f"Aqui está um meme {raridade_texto}: **{img_name}** 😂", file=picture)
+
+# -------------------------------
+# EXECUTAR O BOT
+# -------------------------------
+bot.run("seu token")
