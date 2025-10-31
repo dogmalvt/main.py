@@ -1,0 +1,48 @@
+import discord
+import os
+import random
+from discord.ext import commands
+
+# Ativar permissões
+intents = discord.Intents.default()
+intents.message_content = True
+
+# Criar o bot
+bot = commands.Bot(command_prefix='$', intents=intents)
+
+@bot.event
+async def on_ready():
+    print(f'Estamos logados como {bot.user}')
+
+# -------------------------------
+# COMANDOS DO BOT
+# -------------------------------
+
+# Comando de saudação
+@bot.command()
+async def hello(ctx):
+    await ctx.send(f'Olá! Eu sou o bot {bot.user}!')
+
+# Comando de repetição
+@bot.command()
+async def heh(ctx, count_heh: int = 5):
+    await ctx.send("he" * count_heh)
+
+# Comando que envia um meme aleatório
+@bot.command()
+async def meme(ctx):
+    files = os.listdir('images')  # lista todos os arquivos da pasta images
+    print(f"Arquivos encontrados: {files}")  # mostra no terminal
+    if not files:
+        await ctx.send("Nenhum meme encontrado na pasta 😢")
+        return
+    
+    img_name = random.choice(files)  # escolhe um aleatório
+    with open(f'images/{img_name}', 'rb') as f:
+        picture = discord.File(f)
+    await ctx.send(f"Aqui está um meme aleatório: **{img_name}** 😂", file=picture)
+
+# -------------------------------
+# EXECUTAR O BOT
+# -------------------------------
+bot.run("seu token aqui")
