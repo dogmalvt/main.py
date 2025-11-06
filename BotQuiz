@@ -1,0 +1,54 @@
+import discord
+import os
+import random
+from discord.ext import commands
+
+TOKEN = os.getenv("DISCORD_TOKEN")
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+bot = commands.Bot(command_prefix='$', intents=intents)
+
+questions = [
+    {
+        "pergunta": "Qual desses é um exemplo de poluição atmosférica?",
+        "alternativas": ["A) Emissao de CO2 por carros", "B) Reciclagem de plastico", "C) Energia solar", "D) Tratamento de esgoto"],
+        "correta": "A"
+    },
+    {
+        "pergunta": "Qual tipo de poluição afeta diretamente os rios e oceanos?",
+        "alternativas": ["A) Poluicao luminosa", "B) Poluicao sonora", "C) Poluicao hidrica", "D) Poluicao radioativa"],
+        "correta": "C"
+    },
+    {
+        "pergunta": "O plastico leva ate quantos anos para se decompor?",
+        "alternativas": ["A) dez anos", "B) cinquenta anos", "C) duzentos anos", "D) mais de quatrocentos anos"],
+        "correta": "D"
+    }
+]
+
+@bot.event
+async def on_ready():
+    print(f'Logado como {bot.user}')
+
+@bot.command()
+async def quiz(ctx):
+    q = random.choice(questions)
+    await ctx.send(f"**QUIZ SOBRE POLUIÇÃO**\n{q['pergunta']}\n\n" + "\n".join(q["alternativas"]))
+
+    def check(msg):
+        return msg.author == ctx.author and msg.channel == ctx.channel
+
+    try:
+        msg = await bot.wait_for("message", check=check, timeout=15.0)
+    except:
+        await ctx.send("Tempo esgotado!")
+        return
+
+    if msg.content.upper().strip() == q["correta"]:
+        await ctx.send("Correto!")
+    else:
+        await ctx.send(f"Incorreto! A resposta correta era: **{q['correta']}**")
+
+bot.run("SEU TOKEN AQUI")
