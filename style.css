@@ -1,0 +1,46 @@
+body {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    background-color: #646262; /* Branco */
+    color: #e8e0e0;
+    margin: 0;
+    padding: 0;
+}
+
+/* Títulos */
+h1, h2, h3 {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    color: #5988FF; /* Azul */
+}
+
+/* Destaque em rosa */
+.highlight {
+    background-color: #FD98FB; /* Rosa */
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+/* Botão verde */
+button {
+    background-color: #D6FF6B; /* Verde */
+    color: #333;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+h1:hover { animation: color-change 3s infinite; }
+
+@keyframes color-change {
+  0% { color: #5988FF; } /* Azul */
+  33% { color: #FD98FB; } /* Rosa */
+  66% { color: #D6FF6B; } /* Verde */
+  100% { color: #5988FF; } /* Azul */
+}
