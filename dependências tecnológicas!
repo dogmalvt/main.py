@@ -1,0 +1,26 @@
+from flask import Flask
+import random
+
+app = Flask(__name__)
+facts_list = [
+    "De acordo com um estudo realizado em 2018, mais de 50 porcento das pessoas entre 18 e 34 anos se consideram dependentes de seus smartphones.",
+    "O estudo da dependência tecnológica é uma das áreas mais relevantes da pesquisa científica moderna.",
+    "Pesquisas indicam que o uso prolongado de smartphones pode afetar negativamente a concentração e a memória.",
+    "Estudos mostram que o uso excessivo de smartphones pode contribuir para a ansiedade e a depressão."
+
+]
+
+@app.route("/")
+def hello_world():
+    return '<a href="/random_fact">Veja um fato aleatório!</a>' 
+
+
+@app.route("/random_fact")
+def random_fact():
+    return f'<p>{random.choice(facts_list)}</p>'
+
+@app.route("/coin")
+def coin():
+    return random.choice(["Cara", "Coroa"])
+
+app.run(debug=True)
