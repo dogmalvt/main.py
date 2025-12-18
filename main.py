@@ -12,4 +12,4 @@ word = input("Digite uma palavra moderna que você não entende (escreva toda a 
 if word in meme_dict.keys():
     print(meme_dict[word])
 else:
-    print("Palavra não encontrada")
+    print("Palavra não encontrada no dicionário de memes.")
