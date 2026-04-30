@@ -1,0 +1,74 @@
+import sounddevice as sd
+import scipy.io.wavfile as wav
+import speech_recognition as sr
+from googletrans import Translator
+import random
+
+duration = 5
+sample_rate = 44100
+
+print("Bem-vindo ao Trilingo")
+
+words_by_level = {
+    "fácil": ["gato", "cachorro", "maçã", "leite", "sol"],
+    "médio": ["casa", "escola", "amigo", "janela", "amarelo"],
+    "difícil": ["tecnologia", "universidade", "informação", "pronúncia", "imaginação"]
+}
+
+print("Níveis disponíveis:", ", ".join(words_by_level.keys()))
+nivel = input("Escolha o nível: ").lower()
+
+if nivel not in words_by_level:
+    print("❌ Não temos esse nivel.")
+    exit()
+
+translator = Translator()
+pontos = 0
+erros = 0
+
+print("\n🎮 Vamos Lá! Você pode errar até 3 vezes.")
+
+while erros < 3:
+    palavra_pt = random.choice(words_by_level[nivel])
+
+    print(f"\n Traduza para inglês: {palavra_pt}")
+    print(" Fale agora...")
+
+    recording = sd.rec(int(duration * sample_rate), samplerate=sample_rate, channels=1, dtype="int16")
+    sd.wait()
+
+    wav.write("output.wav", sample_rate, recording)
+    print(" Áudio gravado")
+
+    recognizer = sr.Recognizer()
+
+    with sr.AudioFile("output.wav") as source:
+        audio = recognizer.record(source)
+
+    try:
+        texto = recognizer.recognize_google(audio, language="en-US")
+        print("Você disse:", texto)
+
+        traducao = translator.translate(palavra_pt, dest="en")
+        correta = traducao.text.lower()
+        resposta = texto.lower()
+
+        if correta in resposta:
+            print("Acertou!")
+            pontos += 1
+        else:
+            print(f" Errou! A resposta correta é: {correta}")
+            erros += 1
+
+        print(f"📊 Pontos: {pontos} |  Erros: {erros}/3")
+
+    except sr.UnknownValueError:
+        print(" Não consegui entender o que você disse.")
+        erros += 1
+
+    except sr.RequestError as e:
+        print(f"Erro no serviço: {e}")
+        break
+
+print("\n Fim de jogo!")
+print(f" Sua pontuação final foi: {pontos}")
