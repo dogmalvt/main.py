@@ -7,6 +7,7 @@ import random
 duration = 5
 sample_rate = 44100
 
+print("Olá meu querido aluno")
 print("Bem-vindo ao Trilingo")
 
 words_by_level = {
